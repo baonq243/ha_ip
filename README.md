@@ -3,6 +3,7 @@
 Sử dụng:
 - Khai báo host file
 - Run
-```shell script
+
+```sh
 ansible-playbook -i hosts ha_ip.yml
 ```
