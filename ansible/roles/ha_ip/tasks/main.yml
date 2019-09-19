@@ -1,0 +1,41 @@
+---
+- name: Create DIR /opt/ha_ip
+  file: path=/opt/ha_ip state=directory
+ 
+- name: Copy app
+  copy:
+    src: "{{ service_tag }}"
+    dest: /opt/ha_ip/
+    mode: '0750'
+    owner: root
+    group: root
+
+- name: Create config file
+  template: src=config.yml.j2
+            dest=/opt/ha_ip/config.yml
+            backup=yes
+
+- name: Install Supervisor
+  apt:
+    force_apt_get: yes
+    name: supervisor
+    state: present
+  when: ansible_os_family == 'Debian'
+
+
+- name: Install Supervisor
+  yum:
+    name: supervisor
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Ensure the Supervisor service is running
+  service: name=supervisor state=started enabled=yes
+
+- name: Create the Supervisor config file
+  template: src=supervisor_config.j2
+            dest=/etc/supervisor/conf.d/ha_ip.conf
+            backup=yes
+
+- name: Re-read the Supervisor config files
+  supervisorctl: name=ha_ip state=present

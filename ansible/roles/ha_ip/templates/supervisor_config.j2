@@ -1,0 +1,7 @@
+[program:ha_ip]
+command = /opt/ha_ip/{{ service_tag }}
+user = root
+autostart=true
+autorestart=true
+stdout_logfile = /var/log/supervisor/ha_ip.log
+redirect_stderr = true
